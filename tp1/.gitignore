@@ -1,0 +1,4 @@
+*/*.test
+*/*.class
+*/pub.in
+*/pub.out

@@ -48,7 +48,8 @@ public class Is {
     public static void main(String[] args) {
         String text = MyIO.readLine();
         while(!text.equals("FIM")) {
-            MyIO.println(isOnlyVowels(text) + " " + isOnlyConsonant(text) + " " + isIntegerNumber(text) + " " + isDoubleNumber(text));
+            MyIO.println(isOnlyVowels(text) + " " + isOnlyConsonant(text) + " " + isIntegerNumber(text) + " " + 
+            (isIntegerNumber(text) == "SIM" ? isIntegerNumber(text) : isDoubleNumber(text)));
             text=MyIO.readLine();
         }
     } 

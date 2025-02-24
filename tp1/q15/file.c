@@ -15,7 +15,7 @@ void read(FILE *file){
         fscanf(file, "%lf", &value);
         if(!feof(file)){
             read(file);
-            printf("%g\n",file);//%g faz o print do valor em inteiro ou decimal sem os zeros a mais
+            printf("%g\n",value);//%g print the value without the plus zeros
         }
         
     }
@@ -23,10 +23,10 @@ int main(){
     int num;
     char fileOut[10] = "saida.txt";
     scanf("%d", &num);
-    escreveArquivo(num, fileOut);
+    write(num, fileOut);
     FILE *file;
     file = fopen(fileOut, "r");
-    leArquivo(file);
+    read(file);
     fclose(file);
     return 0;
 }

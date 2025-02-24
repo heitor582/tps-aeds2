@@ -1,5 +1,3 @@
-package resp.q13;
-
 import java.io.*;
 import java.net.*;
 import java.util.HashMap;
@@ -136,7 +134,7 @@ public class Html {
               MyIO.print("consoante("+x[22]+") ");
               MyIO.print("<br>("+x[23]+") ");
               MyIO.print("<table>("+x[24]+") ");
-              MyIO.println(palavra);
+              MyIO.println(text);
               text=MyIO.readLine();
         }
    }

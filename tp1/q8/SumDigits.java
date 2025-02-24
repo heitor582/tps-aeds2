@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class SumDigits {
     private static int sumDigits(int number) {
         if(number <= 9){
@@ -7,11 +9,13 @@ public class SumDigits {
         
         return sum;
     }
-    public static void main(String[] args) {
-        String text = MyIO.readLine();
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in, "UTF-8");
+        String text = sc.nextLine();
         while(!text.equals("FIM")) {
-            MyIO.println(sumDigits(Integer.parseInt(text)));
-            text=MyIO.readLine();
+            System.out.println(sumDigits(Integer.parseInt(text)));
+            text=sc.nextLine();
         }
-    }    
+        sc.close();
+    }
 }

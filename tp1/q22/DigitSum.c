@@ -1,7 +1,5 @@
 #include<stdio.h>
 #include<string.h>
-#include<locale.h>
-#include<ctype.h>
 
 int sumDigits(int number) {
     if(number <= 9){
@@ -16,9 +14,9 @@ int main() {
     unsigned char text[1000];
     scanf(" %[^\r\n]", text);
     while (strcmp((char*)text, "FIM")) {
-        int sum = sumDigits((int)text);
+        int sum = sumDigits(atoi(text));
         printf("%d\n", sum);
-        scanf(" %[^\n]", text);
+        scanf(" %[^\r\n]", text);
     }
 
     return 0;

@@ -99,18 +99,12 @@ class MyIO {
 
    public static String readLine(){
       String s = "";
-      char tmp;
       try{
-         do{
-            tmp = (char)in.read();
-            if(tmp != '\n' && tmp != 13){
-               s += tmp;
-            }
-         }while(tmp != '\n');
+         s = in.readLine();
       }catch(IOException ioe){
          System.out.println("lerPalavra: " + ioe.getMessage());
       }
-      return s;
+      return s != null ? s : "";
    }
 
    public static String readLine(String str){

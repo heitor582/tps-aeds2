@@ -8,11 +8,13 @@ public class Anagram {
         Map<Character, Integer> map = new HashMap<Character, Integer>();
 
         for(int i = 0; i<x.length(); i++){ //O(x)
-            map.put(x.charAt(i), map.get(x.charAt(i))+1);
+            char c = x.charAt(i);
+            map.put(x.charAt(i), map.getOrDefault(c, 0)+1);
         }
 
         for(int i = 0; i<y.length(); i++){ //O(y)
-            map.put(y.charAt(i), map.get(y.charAt(i))-1);
+            char c = y.charAt(i);
+            map.put(c, map.getOrDefault(c, 0)-1);
         }
 
         for(Character key:map.keySet()){ //O(m)
@@ -27,7 +29,15 @@ public class Anagram {
     public static void main(String[] args) {
         String text = MyIO.readLine();
         while(!text.equals("FIM")) {
-            MyIO.println(anagram(text, text));
+            int j = 0;
+            for(int i = 0; i<text.length(); i++){
+                if(text.charAt(i) == '-'){
+                    j=i-1;
+                    i = text.length();
+                }
+            }
+            boolean is = anagram(text.substring(0, j), text.substring(j+2, text.length()));
+            MyIO.println(is ? "SIM" : "NAO");
             text=MyIO.readLine();
         }
     } 

@@ -62,9 +62,10 @@ public class IsRec {
             MyIO.print(" ");
             printOut(isOnlyConsonant(text, 0));
             MyIO.print(" ");
-            printOut(isIntegerNumber(text, 0));
+            boolean isNumber = isIntegerNumber(text, 0);
+            printOut(isNumber);
             MyIO.print(" ");
-            printOut(isDoubleNumber(text, 0, false));
+            printOut(isNumber ? isNumber : isDoubleNumber(text, 0, false));
             MyIO.println("");
             text = MyIO.readLine();
         }

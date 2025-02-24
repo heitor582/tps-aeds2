@@ -2,28 +2,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Substring {
-    private static String longerSubstring(String x){
+    private static int longerSubstring(String x){
         if(x.length() < 2){
-            return x;
+            return x.length();
         }
 
-        String result = "";
         Map<Character, Integer> map = new HashMap<Character, Integer>(); // can use contains on string but i prefer to change O(n) for O(1) with O(n) of space
         int j = 0;
         int i = 0;
-        String history = "";
-        while(i<j) {
-            while(map.get(x.charAt(i)) > 1){
-                i++;
+        int result = 0;
+        while(j<x.length()) {
+            while(map.getOrDefault(x.charAt(j), 0) > 0){
                 map.put(x.charAt(i), map.get(x.charAt(i))-1);
-                history = history.substring(i);  // create a new string from index i to string.length(), is better than use contains()
+                i++;
             }
-            map.put(x.charAt(i), map.get(x.charAt(i))+1);
-            if(j-i > result.length()){
-                result = history; // or use history.substring(i,j);
-            }
+            map.put(x.charAt(j), map.getOrDefault(x.charAt(j), 0)+1);
             j++;
-            history += x.charAt(i);
+            if((j-i) > result){
+                result = j-i;
+            }
         }
 
         return result;

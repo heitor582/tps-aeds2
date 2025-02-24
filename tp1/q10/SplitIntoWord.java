@@ -1,12 +1,10 @@
-package resp.q10;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class SplitIntoWord {
     private static List<String> split(char splitChar, String s){
         if(s.length() < 1){
-            return List.of();
+            return new ArrayList<>();
         }
 
         List<String> resultList = new ArrayList<>();
@@ -25,7 +23,7 @@ public class SplitIntoWord {
     public static void main(String[] args){
         String text = MyIO.readLine();
         while(!text.equals("FIM")) {
-            MyIO.println(split(' ', text));
+            MyIO.println(split(' ', text).size() + 1);
             text=MyIO.readLine();
         }
     }
