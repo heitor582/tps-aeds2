@@ -28,9 +28,10 @@ public class PasswordValidation {
         return min && mai && special && number;
     }
     public static void main(String[] args) {
+        MyIO.setCharset("UTF-8");
         String text = MyIO.readLine();
         while(!text.equals("FIM")) {
-            MyIO.println(validate(text));
+            MyIO.println(validate(text) ? "SIM" : "NÃO");
             text=MyIO.readLine();
         }
     } 
