@@ -90,8 +90,10 @@ public class Html {
                 temp = s.substring(i, j + 1);
                 if (isBr(temp)) {
                     x[23] += 1;
+                    i+=3;
                 } else if (isTable(temp)) {
                     x[24] += 1;
+                    i+=6;
                 }
             }
         }
@@ -107,8 +109,8 @@ public class Html {
             String html = getHtml(endereco);
             x = contador(html);
 
-            MyIO.print("a(" + (x[0]-1) + ") ");
-            MyIO.print("e(" + (x[1]-1) + ") ");
+            MyIO.print("a(" + x[0] + ") ");
+            MyIO.print("e(" + x[1] + ") ");
             MyIO.print("i(" + x[2] + ") ");
             MyIO.print("o(" + x[3] + ") ");
             MyIO.print("u(" + x[4] + ") ");
@@ -132,7 +134,7 @@ public class Html {
             MyIO.print("\u00F4(" + x[18] + ") "); //ã
             MyIO.print("\u00FB(" + x[19] + ") "); //õ
 
-            MyIO.print("consoante(" + (x[22]-3) + ") ");
+            MyIO.print("consoante(" + x[22] + ") ");
             MyIO.print("<br>(" + x[23] + ") ");
             MyIO.print("<table>(" + x[24] + ") ");
             MyIO.println(text);
