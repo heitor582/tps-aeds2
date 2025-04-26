@@ -163,6 +163,21 @@ public class Show{
         mergeSort(arr, mid+1, right);
         merge(arr,left,mid,right);
     }
+    public static void selectionSortPartial(List<Show> shows, int right){
+        if(shows.size() < right){
+            right = shows.size();
+        }
+        for(int i = 0; i<right; i++){
+            int min = i;
+            for(int j = i+1; j<shows.size(); j++){
+                comp++;
+                if(compare(shows.get(min).getTitle(), shows.get(j).getTitle()) > 0){
+                    min = j;
+                }
+            }
+            swap(shows, i, min);
+        }
+    }
     public static void selectionSort(List<Show> shows){
         for(int i = 0; i<shows.size()-1; i++){
             int min = i;
@@ -189,14 +204,25 @@ public class Show{
             arr.set(j + 1, current);
         }
     }
-    public static void verdeSort(List<Show> list, long inicio, String filename, Consumer<List<Show>> sort) throws FileNotFoundException{
-        PrintWriter log = new PrintWriter("867936_"+filename+".txt");
-
+    public static void verdeSort(List<Show> list, String filename, Consumer<List<Show>> sort) throws FileNotFoundException{
+        long inicio = System.currentTimeMillis();
         sort.accept(list);
+        long fimTempo = System.currentTimeMillis();
         for(Show item : list){
              item.print();
         }
+
+        PrintWriter log = new PrintWriter("867936_"+filename+".txt");
+        log.println("867936\t" + comp + "\t" + mov + "\t" + (fimTempo - inicio));
+        log.close();
+    }
+    public static void verdeSort(List<Show> list, String filename, Consumer<List<Show>> sort, Consumer<List<Show>> print) throws FileNotFoundException{
+        long inicio = System.currentTimeMillis();
+        sort.accept(list);
         long fimTempo = System.currentTimeMillis();
+        print.accept(list);
+
+        PrintWriter log = new PrintWriter("867936_"+filename+".txt");
         log.println("867936\t" + comp + "\t" + mov + "\t" + (fimTempo - inicio));
         log.close();
     }
@@ -323,7 +349,32 @@ public class Show{
         }
         catch(IOException e) { e.printStackTrace(); }
     }
-
+    public static void quicksortRec(List<Show> array, int esq, int dir) {
+        int i = esq, j = dir;
+        int k = 10;
+        Show pivo = array.get(dir);
+    
+        while (i <= j) {
+            while (compare(shows.get(i).getTitle(), pivo.getTitle()) < 0) {
+                i++;
+            }
+            while (compare(shows.get(j).getTitle(), pivo.getTitle()) > 0) {
+                j--;
+            }
+    
+            if (i <= j) {
+                swap(array, i, j);
+                i++;
+                j--;
+            }
+        }
+        if (esq < j) quicksortRec(array, esq, j);
+        if (i < k && i < dir) quicksortRec(array, i, dir);
+    }
+    
+    public static void quicksort(List<Show> array, int n) {
+        quicksortRec(array, 0, n-1);
+    }
     public static void main(String[] args) throws FileNotFoundException {
        startShows();
        Scanner sc = new Scanner(System.in);
@@ -351,11 +402,23 @@ public class Show{
     //    }
 
        sc.close();
-       long inicio = System.currentTimeMillis();
-       //verdeSort(list, inicio, "selecao", lista -> selectionSort(lista));
-       //verdeSort(list, inicio, "heapsort", lista -> heapSort(lista));
-       //verdeSort(list, inicio, "countingsort", lista -> mergeSort(lista,0,lista.size()-1));
-       verdeSort(list, inicio, "insercao", lista -> insertionSort(lista));
+       //verdeSort(list, "selecao", lista -> selectionSort(lista));
+       //verdeSort(list, "heapsort", lista -> heapSort(lista));
+       //verdeSort(list, "countingsort", lista -> mergeSort(lista,0,lista.size()-1));
+    //    verdeSort(list, "selecaoparcial", lista -> {
+    //     selectionSortPartial(list, 10);;
+    //    }, lista -> {
+    //     for(int i = 0; i<10; i++){
+    //         lista.get(i).print();
+    //     }
+    //    });
+    verdeSort(list, "quickparcial", lista -> {
+        quicksort(list, list.size());
+       }, lista -> {
+        for(int i = 0; i<10; i++){
+            lista.get(i).print();
+        }
+       });
     //    log.println("867936\t" + (fimTempo - inicio) + "\t" + comp); //sequencial
     }
 
