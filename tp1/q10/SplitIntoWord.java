@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class SplitIntoWord {
     private static List<String> split(char splitChar, String s){
@@ -21,10 +22,12 @@ public class SplitIntoWord {
         return resultList;
     }
     public static void main(String[] args){
-        String text = MyIO.readLine();
+        Scanner sc = new Scanner(System.in, "UTF-8");
+        String text = sc.nextLine();
         while(!text.equals("FIM")) {
-            MyIO.println(split(' ', text).size() + 1);
-            text=MyIO.readLine();
+            System.out.println(split(' ', text).size() + 1);
+            text=sc.nextLine();
         }
+        sc.close();
     }
 }

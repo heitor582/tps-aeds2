@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Substring {
     private static int longerSubstring(String x){
@@ -27,10 +28,12 @@ public class Substring {
     }
 
     public static void main(String[] args) {
-        String text = MyIO.readLine();
+        Scanner sc = new Scanner(System.in, "ISO-8859-1");
+        String text = sc.nextLine();
         while(!text.equals("FIM")) {
-            MyIO.println(longerSubstring(text));
-            text=MyIO.readLine();
+            System.out.println(longerSubstring(text));
+            text = sc.nextLine();
         }
+        sc.close();
     } 
 }

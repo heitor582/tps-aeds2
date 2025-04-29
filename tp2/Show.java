@@ -7,13 +7,15 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
 public class Show{
-    static SimpleDateFormat ddf = new SimpleDateFormat("MMMM d, yyyy");
+    static SimpleDateFormat ddf = new SimpleDateFormat("MMMM dd, yyyy");
+    static SimpleDateFormat ddf2 = new SimpleDateFormat("MMMM d, yyyy");
 
     public static final String FILE_PATH = "/tmp/disneyplus.csv";
     public static ArrayList<Show> shows = new ArrayList<Show>();
@@ -270,14 +272,14 @@ public class Show{
 
             this.country = !parts.get(5).isEmpty() ? parts.get(5) : "NaN";
 
-            if (!parts.get(6).isEmpty()) {
+            if (parts.get(6) != null && !parts.get(6).isEmpty()) {
                 try {
                     this.date_added = ddf.parse(parts.get(6));
                 } catch (ParseException e) {
                     this.date_added = null;
                 }
             } else {
-                this.date_added = null;
+                this.date_added = ddf.parse("March 1, 1900");
             }
 
             this.release_year = !parts.get(7).isEmpty()
@@ -301,7 +303,7 @@ public class Show{
         System.out.print(String.join(", ", cast));
         System.out.print("] ## " + country + " ## ");
 
-        System.out.print(date_added != null ? ddf.format(date_added) : "NaN");
+        System.out.print(date_added != null ? ddf2.format(date_added) : "NaN");
         System.out.print(" ## " + release_year + " ## " + range + " ## " + duration + " ## [");
         System.out.print(String.join(", ", listed_in));
         System.out.println("] ##");
@@ -315,6 +317,18 @@ public class Show{
     public static int compare(String a, String b){
         comp++;
         return a.trim().compareToIgnoreCase(b.trim());
+    }
+    public static int compareDateAddedAndTitle(Show a, Show b){
+        if(a.date_added == null || b.date_added == null){
+            return compare(a.title, b.title);
+        }
+        comp++;
+        int compDate = a.date_added.compareTo(b.date_added);
+        if(compDate != 0){
+            return compDate;
+        }
+
+        return compare(a.title, b.title);
     }
     public static int compareWithCase(String a, String b){
         comp++;
@@ -349,16 +363,15 @@ public class Show{
         }
         catch(IOException e) { e.printStackTrace(); }
     }
-    public static void quicksortRec(List<Show> array, int esq, int dir) {
+    public static void quicksortRec(List<Show> array, int esq, int dir, int k) {
         int i = esq, j = dir;
-        int k = 10;
-        Show pivo = array.get(dir);
+        Show pivo = array.get((dir+esq)/2);
     
         while (i <= j) {
-            while (compare(shows.get(i).getTitle(), pivo.getTitle()) < 0) {
+            while (compareDateAddedAndTitle(array.get(i), pivo) < 0) {
                 i++;
             }
-            while (compare(shows.get(j).getTitle(), pivo.getTitle()) > 0) {
+            while (compareDateAddedAndTitle(array.get(j), pivo) > 0) {
                 j--;
             }
     
@@ -368,12 +381,110 @@ public class Show{
                 j--;
             }
         }
-        if (esq < j) quicksortRec(array, esq, j);
-        if (i < k && i < dir) quicksortRec(array, i, dir);
+        if (esq < j) quicksortRec(array, esq, j, k);
+        if (i < k && i < dir) quicksortRec(array, i, dir, k);
     }
     
     public static void quicksort(List<Show> array, int n) {
-        quicksortRec(array, 0, n-1);
+        quicksortRec(array, 0, n-1, 10);
+    }
+    public static int getMaior(List<Show> array, int tam){
+        int maior = array.get(0).getRelease_year();
+        for(int i = 1; i < tam; i++){
+            if(array.get(i).getRelease_year() > maior){
+                maior = array.get(i).getRelease_year();
+            }
+        }
+        return maior;
+    }
+    
+    public static int getMaxString(List<Show> array, int tam){
+        int max = 0;
+    
+        for (int i = 0; i < tam; i++) {
+            int len = array.get(i).getTitle().length();
+            if (len > max) {
+                max = len;
+            }
+        }
+        return max;
+    }
+    public static void countingSort(List<Show> array){
+        int tam = array.size();
+        int maior = getMaior(array, tam);
+        int x = 0, p = 0, ano;
+        Show[] ordenado = new Show[tam];
+        int[]  count = new int[maior+1];
+        
+        for(int i = 0; i < maior+1; i++){
+            count[i] = 0;
+        }
+        for(int i = 0; i < tam; i++){
+            count[array.get(i).getRelease_year()]++;
+        }
+        for(int i = 1; i < count.length; i++){
+            count[i] += count[i-1];
+        }
+        for(int i = tam-1; i >= 0; i--){
+            ordenado[count[array.get(i).getRelease_year()]-1] = array.get(i);
+            count[array.get(i).getRelease_year()]--;
+        }
+        for(int i = 0; i < tam; i++){
+            array.set(i, ordenado[i]);
+        }
+        while (x != tam) {
+            ano = array.get(x).getRelease_year();
+    
+            while (x < tam && array.get(x).getRelease_year() == ano) {
+                x++;
+            }
+    
+            int listaTam = x - p;
+            List<Show> lista = new ArrayList<>(Collections.nCopies(listaTam, (Show) null));
+            for (int i = 0; i < listaTam; i++) {
+                lista.set(i, array.get(p+i));
+            }
+    
+            int max = getMaxString(lista, listaTam);
+            for (int pos = max - 1; pos >= 0; pos--) {
+                countingsortString(lista, listaTam, pos);
+            }
+    
+            for (int i = 0; i < listaTam; i++) {
+                array.set(p+i, lista.get(i));
+            }
+            p = x;
+        }
+    }
+    
+    public static void countingsortString(List<Show> array, int n, int esp){
+        Show[] ordenado = new Show[n];
+        int[]  count = new int[256];
+        
+        for (int i = 0; i < 256; i++) {
+            count[i] = 0;
+        }
+        for(int i = 0; i < n; i++){
+            int digit = (array.get(i).getTitle().length() > esp) ? Character.toLowerCase(array.get(i).getTitle().charAt(esp)) : 0;
+            digit = (digit >= 0 && digit < 256) ? digit : 0;
+            comp++;
+            count[digit]++;
+        }
+        for(int i = 1; i < 256; i++){
+            count[i] += count[i-1];
+        }
+        for(int i = n-1; i >= 0; i--){
+            int digit = (array.get(i).getTitle().length() > esp) ? Character.toLowerCase(array.get(i).getTitle().charAt(esp)) : 0;
+            digit = (digit >= 0 && digit < 256) ? digit : 0;
+            comp++;
+            ordenado[count[digit]-1] = array.get(i);
+            count[digit]--;
+            mov++;
+        }
+        for(int i = 0; i < n; i++){
+            array.set(i, ordenado[i]);
+            mov++;
+        }
     }
     public static void main(String[] args) throws FileNotFoundException {
        startShows();
@@ -404,7 +515,6 @@ public class Show{
        sc.close();
        //verdeSort(list, "selecao", lista -> selectionSort(lista));
        //verdeSort(list, "heapsort", lista -> heapSort(lista));
-       //verdeSort(list, "countingsort", lista -> mergeSort(lista,0,lista.size()-1));
     //    verdeSort(list, "selecaoparcial", lista -> {
     //     selectionSortPartial(list, 10);;
     //    }, lista -> {
@@ -420,6 +530,7 @@ public class Show{
         }
        });
     //    log.println("867936\t" + (fimTempo - inicio) + "\t" + comp); //sequencial
+    //verdeSort(list, "countingsort", lista -> countingSort(lista));
     }
 
 }

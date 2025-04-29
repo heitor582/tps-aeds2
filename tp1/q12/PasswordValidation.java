@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class PasswordValidation {
     private static boolean validate(String x){
         if(x.length() < 8){
@@ -28,11 +30,12 @@ public class PasswordValidation {
         return min && mai && special && number;
     }
     public static void main(String[] args) {
-        MyIO.setCharset("UTF-8");
-        String text = MyIO.readLine();
+        Scanner sc = new Scanner(System.in, "UTF-8");
+        String text = sc.nextLine();
         while(!text.equals("FIM")) {
             MyIO.println(validate(text) ? "SIM" : "NÃO");
-            text=MyIO.readLine();
+            text=sc.nextLine();
         }
+        sc.close();
     } 
 }

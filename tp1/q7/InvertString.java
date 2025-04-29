@@ -1,3 +1,4 @@
+import java.util.Scanner;
 public class InvertString{
     private static String invert(String s){
         String result = "";
@@ -7,10 +8,12 @@ public class InvertString{
         return result;
     }
     public static void main(String[] args){
-        String text = MyIO.readLine();
+        Scanner sc = new Scanner(System.in, "UTF-8");
+        String text = sc.nextLine();
         while(!text.equals("FIM")) {
-            MyIO.println(invert(text));
-            text=MyIO.readLine();
+            System.out.println(invert(text));
+            text=sc.nextLine();
         }
+        sc.close();
     }
 }

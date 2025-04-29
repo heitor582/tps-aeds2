@@ -3,10 +3,17 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+#include <ctype.h>
 
 #define MAX_LINE 2048
 #define MAX_SHOWS 2000
-typedef struct {
+
+typedef struct Date{
+    int day;
+    int month;
+    int year;
+}Date;
+typedef struct Show{
     char* show_id;
     char* type;
     char* title;
@@ -15,6 +22,7 @@ typedef struct {
     int cast_size;
     char* country;
     char* date_added;
+    Date date;
     int release_year;
     char* range;
     char* duration;
@@ -25,6 +33,65 @@ Show* shows[MAX_SHOWS];
 int shows_count = 0;
 int mov = 0;
 int comp = 0;
+int monthToNumber(char mes[]){
+    if(strcmp(mes, "January") == 0){
+        return 1;
+    }else if(strcmp(mes, "February") == 0){
+        return 2;
+    }else if(strcmp(mes, "March") == 0){
+        return 3;
+    }else if(strcmp(mes, "April") == 0){
+        return 4;
+    }else if(strcmp(mes, "May") == 0){
+        return 5;
+    }else if(strcmp(mes, "June") == 0){
+        return 6;
+    }else if(strcmp(mes, "July") == 0){
+        return 7;
+    }else if(strcmp(mes, "August") == 0){
+        return 8;
+    }else if(strcmp(mes, "September") == 0){
+        return 9;
+    }else if(strcmp(mes, "October") == 0){
+        return 10;
+    }else if(strcmp(mes, "November") == 0){
+        return 11;
+    }else if(strcmp(mes, "December") == 0){
+        return 12;
+    }
+    return 0;
+}
+Date dateToInt(char data[]){
+    //September 24, 2021
+        char month[20], day[5], year[10];
+        int i = 0, j = 0;
+        Date d;
+        
+        while (data[i] != ' ') {
+            month[j++] = data[i++];
+        }
+        month[j] = '\0'; 
+        i++; 
+        
+        j = 0;
+        while (data[i] != ',') {
+            day[j++] = data[i++];
+        }
+        day[j] = '\0';
+        i += 2; 
+
+        j = 0;
+        while (data[i] != '\0') {
+            year[j++] = data[i++];
+        }
+        year[j] = '\0';
+
+        d.day = atoi(day);
+        d.month = monthToNumber(month);
+        d.year = atoi(year);
+        
+        return d;
+}
 void swap(char** v, int i, int j){
     char* temp = v[i];
     v[i] = v[j];
@@ -53,8 +120,43 @@ int compareShowsByTypeThenTitle(Show* a, Show* b) {
 
     return compare(a->title, b->title);
 }
+int compareShowDate(Date a, Date b){
+    if(a.year > b.year){
+        comp += 1;
+        return 1;
+    } else if(a.year < b.year){
+        comp += 2;
+        return -1;
+    }
+
+    if(a.month > b.month){
+        comp += 3;
+        return 1;
+    } else if(a.month < b.month){
+        comp += 4;
+        return -1;
+    }
+
+    if(a.day > b.day){
+        comp += 5;
+        return 1;
+    } else if(a.day < b.day){
+        comp += 6;
+        return -1;
+    }
+
+    comp += 6;
+    return 0;
+}
 int compareByDateAddedThenTitle(Show* a, Show* b) {
-    int cmpDate = compare(a->date_added, b->date_added);
+    int cmpDate = compareShowDate(a->date, b->date);
+    if (cmpDate != 0) {
+        return cmpDate;
+    }
+    return compare(a->title, b->title);
+}
+int compareByDirectorThenTitle(Show* a, Show* b){
+    int cmpDate = compare(a->director, b->director);
     if (cmpDate != 0) {
         return cmpDate;
     }
@@ -176,7 +278,8 @@ Show* parse_show(char* line) {
         heapSort(s->cast, s->cast_size);
     }
     s->country = strlen(fields[5]) > 0 ? fields[5] : "NaN";
-    s->date_added = strlen(fields[6]) > 0 ? fields[6] : "NaN";
+    s->date_added = strlen(fields[6]) > 0 ? fields[6] : "March 1, 1900";
+    s->date = dateToInt(s->date_added);
     s->release_year = strlen(fields[7]) > 0 ? atoi(fields[7]) : -1;
     s->range = strlen(fields[8]) > 0 ? fields[8] : "NaN";
     s->duration = strlen(fields[9]) > 0 ? fields[9] : "NaN";
@@ -254,7 +357,7 @@ void printVerde(char* filename, clock_t inicio){
     FILE *matricula = fopen(fullFilename, "w");
     clock_t final = clock();
     double tempo = (double)(final - inicio) / CLOCKS_PER_SEC;
-    fprintf(matricula, "859230\t%fs\t%d", tempo, comp);
+    fprintf(matricula, "867936\t%fs\t%d", tempo, comp);
     fclose(matricula);
 }
 void printSortVerde(char* filename, void (*sort)(Show* v[], int size), Show* v[], int size){
@@ -269,7 +372,7 @@ void printSortVerde(char* filename, void (*sort)(Show* v[], int size), Show* v[]
     sprintf(fullFilename, "867936_%s.txt", filename);
     FILE *matricula = fopen(fullFilename, "w");
     double tempo = (double)(final - inicio) / CLOCKS_PER_SEC;
-    fprintf(matricula, "859230\t%fs\t%d", tempo, comp);
+    fprintf(matricula, "867936\t%fs\t%d", tempo, comp);
     fclose(matricula);
 }
 void printSortVerdeParcial(char* filename, void (*sort)(Show* v[], int size, int steps), Show* v[], int size, int steps){
@@ -284,7 +387,7 @@ void printSortVerdeParcial(char* filename, void (*sort)(Show* v[], int size, int
     sprintf(fullFilename, "867936_%s.txt", filename);
     FILE *matricula = fopen(fullFilename, "w");
     double tempo = (double)(final - inicio) / CLOCKS_PER_SEC;
-    fprintf(matricula, "859230\t%fs\t%d", tempo, comp);
+    fprintf(matricula, "867936\t%fs\t%d", tempo, comp);
     fclose(matricula);
 }
 int compareShowsByTitle(const void* a, const void* b) {
@@ -328,17 +431,17 @@ void bubbleSort(Show* v[], int size){
     for(int i = 0; i<size-1 && swaped; i++){
         swaped = 0;
         for(int j = 0; j < size-i-1; j++){
-            if(compareByDateAddedThenTitle(v[j], v[j+1])<0){
-                swap(v,j,j+1);
+            if(compareByDateAddedThenTitle(v[j], v[j+1])>0){
+                swapShows(v,j,j+1);
                 swaped=1;
             }
         }
     }
 }
-void insercaoParcial(Show* v[], int steps){
-    for (int i = 1; i < steps; i++) {
+void insercaoParcial(Show* v[], int size, int steps){
+    for (int i = 1; i < size; i++) {
         Show* current = v[i];
-        int j = i - 1;
+        int j = i<steps ? i - 1 : steps - 1;
         
         while (j >= 0 && compareShowsByTypeThenTitle(v[j], current) > 0) {
             v[j+1] = v[j];
@@ -348,41 +451,148 @@ void insercaoParcial(Show* v[], int steps){
     }
 }
 void heapsortPartial(Show* v[], int size, int steps){
-    for(int i = 1; i<steps;i++){
-        for(int j = i; j>0 && compare(v[j]->title, v[(j-1)/2]->title) > 0; j=(j-1)/2){
-            swap(v, j, (j-1)/2);
+    for(int i = 1; i<=steps;i++){
+        for(int j = i; j>0 && compareByDirectorThenTitle(v[j], v[(j-1)/2]) > 0; j=(j-1)/2){
+            swapShows(v, j, (j-1)/2);
         }
     }
-    for(int i = steps; i<size; i++){
-        swap(v,i,0);
+    for(int i = steps+1; i<size; i++){
+        swapShows(v,i,0);
         int j = 0;
-        while(j<i && (j*2+1 < i || j*2+2 < i) ){
-            int ji = j*2+2 < i && compare(v[j*2+2]->title, v[j*2+1]->title) > 0? j*2+2 : j*2+1;
-            if(compare(v[ji]->title, v[j]->title) >0){
-                swap(v, j, ji);
+        while(j<steps && (j*2+1 < steps || j*2+2 < steps) ){
+            int ji = j*2+2 < i && compareByDirectorThenTitle(v[j*2+2], v[j*2+1]) > 0? j*2+2 : j*2+1;
+            if(compareByDirectorThenTitle(v[ji], v[j]) > 0){
+                swapShows(v, j, ji);
                 j=ji;
             } else {
                 j=i;
             }
         }
     }
-    while (steps > 0) {
-        swap(v,0, steps--);
+
+    for(int i = steps; i>0;i--){
+        swapShows(v,0,i);
         int j = 0;
-        while(j<steps && (j*2+1 < steps || j*2+2 < steps) ){
-            int ji = j*2+2 < steps && compare(v[j*2+2]->title, v[j*2+1]->title) > 0? j*2+2 : j*2+1;
-            if(compare(v[ji]->title, v[j]->title) >0){
-                swap(v, j, ji);
+        while(j<i && (j*2+1 < i || j*2+2 < i) ){
+            int ji = j*2+2 < i && compareByDirectorThenTitle(v[j*2+2], v[j*2+1]) > 0? j*2+2 : j*2+1;
+            if(compareByDirectorThenTitle(v[ji], v[j]) >0){
+                swapShows(v, j, ji);
                 j=ji;
             } else {
-                j=steps;
+                j=i;
             }
         }
     }
 }
 
+
+int getMax(Show* array[], int tam) {
+    int max = array[0]->release_year;
+    for (int i = 1; i < tam; i++) {
+        if (array[i]->release_year > max) {
+            max = array[i]->release_year;
+        }
+    }
+    return max;
+}
+
+int getMaxString(Show* array[], int tam){
+    int max = 0;
+    
+    for (int i = 0; i < tam; i++) {
+        int len = strlen(array[i]->title);
+        if (len > max) {
+            max = len;
+        }
+    }
+    return max;
+}
+
+void countingsort(Show* array[], int n, int esp) {
+    Show** ordenado = (Show**) malloc(n * sizeof(Show*));
+    int count[10] = {0};
+    for (int i = 0; i < n; i++) {
+        int digit = (array[i]->release_year / esp) % 10;
+        count[digit]++;
+    }
+    for (int i = 1; i < 10; i++) {
+        count[i] += count[i-1];
+    }
+    for (int i = n - 1; i >= 0; i--) {
+        int digit = (array[i]->release_year / esp) % 10;
+        ordenado[count[digit] - 1] = array[i];
+        count[digit]--;
+        mov++;
+    }
+    for (int i = 0; i < n; i++) {
+        array[i] = ordenado[i];
+        mov++;
+    }
+    free(ordenado);
+}
+
+void countingsortString(Show* array[], int n, int esp) {
+    Show** ordenado = (Show**) malloc(n * sizeof(Show*));
+    int count[256] = {0};
+    
+    for (int i = 0; i < n; i++) {
+        int digit = (strlen(array[i]->title) > esp) ? (unsigned char)tolower(array[i]->title[esp]) : 0;
+        count[digit]++;
+    }
+    for (int i = 1; i < 256; i++) {
+        count[i] += count[i-1];
+    }
+    for (int i = n - 1; i >= 0; i--) {
+        int digit = (strlen(array[i]->title) > esp) ? (unsigned char)tolower(array[i]->title[esp]) : 0;
+        ordenado[count[digit] - 1] = array[i];
+        count[digit]--;
+        mov++;
+    }
+    for (int i = 0; i < n; i++) {
+        array[i] = ordenado[i];
+        mov++;
+    }
+    free(ordenado);
+}
+
+//Time: O(d * (n + b)), where d is the number of digits, n is the number of elements, and b is the base of the number system being used.
+//Space: O(n + b)
+void radixsortVerde(Show* array[], int tam) {
+    int max = getMax(array, tam);
+    int x = 0, p = 0, m = 0, ano;
+
+    for (int esp = 1; max / esp > 0; esp *= 10) {
+        countingsort(array, tam, esp);
+    }
+    
+    while(x != tam){
+        ano = array[x]->release_year;
+        while(x < tam && array[x]->release_year == ano){
+            x++;
+        }
+        int listaTam = x - p;
+        Show** lista = (Show**) malloc(listaTam * sizeof(Show*));
+        for (int i = 0; i < listaTam; i++) {
+            lista[i] = array[p+i];
+        }
+        
+        max = getMaxString(lista, listaTam);
+        for (int pos = max - 1; pos >= 0; pos--) {
+            countingsortString(lista, listaTam, pos);
+        }
+        
+        for(int i = 0; i < listaTam; i++){
+            array[p+i] = lista[i];
+        }
+        p = x;
+        
+        free(lista);
+    }
+}
+
 int main() {
     start_shows("/tmp/disneyplus.csv");
+    
     char text[1000];
     scanf(" %[^\r\n]", text);
     Show* localShows[MAX_SHOWS];
@@ -397,24 +607,27 @@ int main() {
         scanf(" %[^\r\n]", text);
     }
 
-    // qsort(localShows, count, sizeof(Show), compareShowsByTitle);
-    // comp--;
-    // scanf(" %[^\r\n]", text);
-    // while (strcmp((char*)text, "FIM")) {
-    //     Show* s = binarySearch(localShows, count, text);
-    //     if(s != NULL){
-    //         printf("SIM\n");
-    //     }else{
-    //         printf("NAO\n");
-    //     }
-    //     scanf(" %[^\r\n]", text);
-    // }a
-    // printVerde("binaria", inicio);
+    clock_t inicio = clock();
+    selectionSortRecursive(localShows, count);
+    comp--;
+    scanf(" %[^\r\n]", text);
+    while (strcmp((char*)text, "FIM")) {
+        Show* s = binarySearch(localShows, count, text);
+        if(s != NULL){
+            printf("SIM\n");
+        }else{
+            printf("NAO\n");
+        }
+        scanf(" %[^\r\n]", text);
+    }
+    printVerde("binaria", inicio);
     
     //printSortVerde("selecaoRecursiva", selectionSortRecursive,localShows,count);
     //printSortVerde("shellsort", shellSort,localShows,count);
-    //printSortVerde("insercaoparcial", insercaoParcial,localShows,10);
-    //printSortVerdeParcial("heapparcial", heapsortPartial,localShows,count,10);
-    printSortVerde("quicksort", quicksort,localShows,count);
+    //printSortVerdeParcial("insercaoparcial", insercaoParcial,localShows,count,10);
+    printSortVerdeParcial("heapparcial", heapsortPartial,localShows,count,10);
+    //printSortVerde("bolha", bubbleSort,localShows,count);
+    //printSortVerde("quicksort", quicksort,localShows,count);
+    //printSortVerde("radixsort", radixsortVerde,localShows,count);
     return 0;
 }
