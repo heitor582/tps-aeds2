@@ -9,6 +9,7 @@ typedef struct LinkedList {
     Node* tail;
     int length;
 } LinkedList;
+
 void print(LinkedList* ll){
     for(Node* cur = ll->head; cur != NULL; cur = cur->next){
         printf("%d", cur->val);
