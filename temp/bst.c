@@ -96,12 +96,15 @@ void deleteBST(BST* bst){
     deleteTreeNode(bst->root);
     free(bst);
 }
+TreeNode* createNode(int value) {
+    TreeNode* node = (TreeNode*) malloc(sizeof(TreeNode));
+    node->value = value;
+    node->left = node->right = NULL;
+    return node;
+}
 TreeNode* insertTreeNode(TreeNode* node, int value){
     if(node == NULL){
-       node = (TreeNode*) malloc(sizeof(TreeNode));
-       node->value = value;
-       node->left = NULL;
-       node->right = NULL;
+       node = createNode(value);
     } else if(value < node->value){
         node->left = insertTreeNode(node->left, value);
     } else if(value > node->value){
@@ -169,12 +172,13 @@ TreeNode* deleteNode(TreeNode* root, int value){
     } else if(root->value < value){
         root->right = deleteNode(root->right, value);
     } else {
+        //2 children i change my curr for the right less value for mantain the rule of bst
         //2 filhos eu troco meu atual pelo menor valor a direita para manter a regra do bst e depois deleto ele
         if(root->left != NULL && root->right != NULL){
             TreeNode* minRightNode = minimumNode(root->right);
             root->value = minRightNode->value;
             root->right = deleteNode(root->right, minRightNode->value);
-        } else if(root->left != NULL){ // 1 filho eu so substituo o atual pelo filho e libero a memoria
+        } else if(root->left != NULL){ //1 child i just substitute the curr for the son and free the memory // 1 filho eu so substituo o atual pelo filho e libero a memoria
             TreeNode* temp = root;
             root = root->left;
             free(temp);
@@ -182,7 +186,7 @@ TreeNode* deleteNode(TreeNode* root, int value){
             TreeNode* temp = root;
             root = root->right;
             free(temp);
-        } else { // nenhum filho eu libero a memoria e seto para null
+        } else { //Without a son i just free the memory and set the root null // nenhum filho eu libero a memoria e seto para null
             free(root);
             root = NULL;
         }
