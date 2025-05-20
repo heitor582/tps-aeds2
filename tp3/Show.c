@@ -32,7 +32,7 @@ typedef struct Show
     int listed_in_size;
 } Show;
 Show *shows[MAX_SHOWS];
-void print_show(Show* show);
+void print_show(Show *show);
 
 typedef struct QueueShow
 {
@@ -211,28 +211,32 @@ void printStack(ListShow *s)
     }
 }
 
-typedef struct Node{
-    struct Node* next;
-    struct Node* previous;
-    Show* value;
+typedef struct Node
+{
+    struct Node *next;
+    struct Node *previous;
+    Show *value;
 } Node;
-Node* createNode(Show* show){
-    Node* newNode = (Node*) malloc(sizeof(Node));
+Node *createNode(Show *show)
+{
+    Node *newNode = (Node *)malloc(sizeof(Node));
     newNode->value = show;
     newNode->next = NULL;
     newNode->previous = NULL;
     return newNode;
 }
 
-typedef struct QueueLLShow{
-    Node* head;
-    Node* tail;
+typedef struct QueueLLShow
+{
+    Node *head;
+    Node *tail;
     int size;
     int sum;
     int maxSize;
 } QueueLLShow;
-QueueLLShow* createQueueLLShow(){
-    QueueLLShow* ll = (QueueLLShow*) malloc(sizeof(QueueLLShow));
+QueueLLShow *createQueueLLShow()
+{
+    QueueLLShow *ll = (QueueLLShow *)malloc(sizeof(QueueLLShow));
     ll->head = NULL;
     ll->tail = NULL;
     ll->size = 0;
@@ -240,16 +244,21 @@ QueueLLShow* createQueueLLShow(){
     ll->maxSize = 5;
     return ll;
 }
-Show* dequeueLL(QueueLLShow* q){
-    if(q->head == NULL) return NULL;
+Show *dequeueLL(QueueLLShow *q)
+{
+    if (q->head == NULL)
+        return NULL;
 
-    Node* node = q->tail;
-    Show* removed = node->value;
+    Node *node = q->tail;
+    Show *removed = node->value;
 
-    if(q->head == q->tail){
+    if (q->head == q->tail)
+    {
         q->head = NULL;
         q->tail = NULL;
-    } else {
+    }
+    else
+    {
         q->tail = q->tail->previous;
         q->tail->next = NULL;
     }
@@ -260,15 +269,20 @@ Show* dequeueLL(QueueLLShow* q){
 
     return removed;
 }
-void enqueueLL(QueueLLShow* q, Show* show){
-    if(q->size == q->maxSize) {
+void enqueueLL(QueueLLShow *q, Show *show)
+{
+    if (q->size == q->maxSize)
+    {
         dequeueLL(q);
     }
-    Node* newNode = createNode(show);
-    if(q->head == NULL && q->tail == NULL){
+    Node *newNode = createNode(show);
+    if (q->head == NULL && q->tail == NULL)
+    {
         q->tail = q->head = newNode;
         newNode->next = newNode->previous = newNode;
-    }else{
+    }
+    else
+    {
         newNode->next = q->head;
         newNode->previous = q->tail;
         q->head->previous = newNode;
@@ -280,77 +294,95 @@ void enqueueLL(QueueLLShow* q, Show* show){
 
     printf("[Media] %d\n", q->sum / q->size);
 }
-void printQueueLL(QueueLLShow* s){
-    Node* cur = s->tail;
-    for (int i = s->size - 1; i >= 0 && cur != NULL; cur=cur->previous,i--)
+void printQueueLL(QueueLLShow *s)
+{
+    Node *cur = s->tail;
+    for (int i = s->size - 1; i >= 0 && cur != NULL; cur = cur->previous, i--)
     {
         printf("[%d] ", i);
         print_show(cur->value);
     }
 }
 
-typedef struct LinkedListShow{
-    Node* head;
-    Node* tail;
+typedef struct LinkedListShow
+{
+    Node *head;
+    Node *tail;
     int size;
 } LinkedListShow;
-LinkedListShow* createLinkedListShow(){
-    LinkedListShow* ll = (LinkedListShow*) malloc(sizeof(LinkedListShow));
+LinkedListShow *createLinkedListShow()
+{
+    LinkedListShow *ll = (LinkedListShow *)malloc(sizeof(LinkedListShow));
     ll->head = NULL;
     ll->tail = NULL;
     ll->size = 0;
     return ll;
 }
-void inserirInicioLL(LinkedListShow* list, Show* show){
-    Node* newNode = createNode(show);
-    if(list->head == NULL && list->tail == NULL){
+void inserirInicioLL(LinkedListShow *list, Show *show)
+{
+    Node *newNode = createNode(show);
+    if (list->head == NULL && list->tail == NULL)
+    {
         list->tail = list->head = newNode;
-    }else{
+    }
+    else
+    {
         list->head->previous = newNode;
         newNode->next = list->head;
         list->head = newNode;
     }
     list->size++;
 }
-void inserirFimLL(LinkedListShow* list, Show* show){
-    if(list->head == NULL && list->tail == NULL){
+void inserirFimLL(LinkedListShow *list, Show *show)
+{
+    if (list->head == NULL && list->tail == NULL)
+    {
         inserirInicioLL(list, show);
         return;
     }
-    Node* newNode = createNode(show);
+    Node *newNode = createNode(show);
     newNode->previous = list->tail;
     list->tail->next = newNode;
     list->tail = newNode;
     list->size++;
 }
-void inserirLL(LinkedListShow* list, Show* show, int position){
-    if(position == 0){
+void inserirLL(LinkedListShow *list, Show *show, int position)
+{
+    if (position == 0)
+    {
         inserirInicioLL(list, show);
         return;
     }
-    if(position == list->size){
-        inserirFimLL(list,show);
+    if (position == list->size)
+    {
+        inserirFimLL(list, show);
         return;
     }
-    Node* cur = list->head;
-    for(int i = 0;cur!=NULL && i < position ;cur=cur->next, i++);
-    Node* newNode = createNode(show);
+    Node *cur = list->head;
+    for (int i = 0; cur != NULL && i < position; cur = cur->next, i++)
+        ;
+    Node *newNode = createNode(show);
     newNode->next = cur;
     newNode->previous = cur->previous;
     cur->previous->next = newNode;
     cur->previous = newNode;
     list->size++;
 }
-Show* removerInicioLL(LinkedListShow* list){
-    if(list->head == NULL && list->tail == NULL) return NULL;
+Show *removerInicioLL(LinkedListShow *list)
+{
+    if (list->head == NULL && list->tail == NULL)
+        return NULL;
 
-    Node* tempNode = list->head;
-    Show* temp = tempNode->value;
+    Node *tempNode = list->head;
+    Show *temp = tempNode->value;
 
-    if(list->head == list->tail){
+    if (list->head == list->tail)
+    {
         list->head = NULL;
         list->tail = NULL;
-    } else {
+    }
+    else
+    {
         list->head = list->head->next;
         list->head->previous = NULL;
     }
@@ -360,10 +392,12 @@ Show* removerInicioLL(LinkedListShow* list){
 
     return temp;
 }
-Show* removerFimLL(LinkedListShow* list){
-    if(list->head == NULL && list->tail == NULL || list->head == list->tail) return removerInicioLL(list);
-    Node* tempNode = list->tail;
-    Show* temp = tempNode->value;
+Show *removerFimLL(LinkedListShow *list)
+{
+    if (list->head == NULL && list->tail == NULL || list->head == list->tail)
+        return removerInicioLL(list);
+    Node *tempNode = list->tail;
+    Show *temp = tempNode->value;
 
     list->tail = list->tail->previous;
     list->tail->next = NULL;
@@ -371,29 +405,36 @@ Show* removerFimLL(LinkedListShow* list){
     free(tempNode);
     return temp;
 }
-Show* removerLL(LinkedListShow* list, int position){
-    if(position == 0) return removerInicioLL(list);
-    if(position == list->size) return removerFimLL(list);
+Show *removerLL(LinkedListShow *list, int position)
+{
+    if (position == 0)
+        return removerInicioLL(list);
+    if (position == list->size)
+        return removerFimLL(list);
 
-    Node* cur = list->head;
-    for(int i = 0;cur!=NULL && i < position ;cur=cur->next, i++);
+    Node *cur = list->head;
+    for (int i = 0; cur != NULL && i < position; cur = cur->next, i++)
+        ;
     cur->previous->next = cur->next;
     cur->next->previous = cur->previous;
-    Show* temp = cur->value;
+    Show *temp = cur->value;
     cur->next = NULL;
     cur->previous = NULL;
     list->size--;
     free(cur);
     return temp;
 }
-void printLL(LinkedListShow* list){
-    for(Node* cur = list->head; cur != NULL; cur = cur->next){
+void printLL(LinkedListShow *list)
+{
+    for (Node *cur = list->head; cur != NULL; cur = cur->next)
+    {
         print_show(cur->value);
     }
 }
-void printStackLL(LinkedListShow* s){
-    Node* cur = s->tail;
-    for (int i = s->size - 1; i >= 0 && cur != NULL; cur=cur->previous,i--)
+void printStackLL(LinkedListShow *s)
+{
+    Node *cur = s->tail;
+    for (int i = s->size - 1; i >= 0 && cur != NULL; cur = cur->previous, i--)
     {
         printf("[%d] ", i);
         print_show(cur->value);
@@ -821,31 +862,42 @@ void processQueueLL(char *command, QueueLLShow *q)
 }
 
 int comp, mov;
-int compare(char* a, char* b){
+int compare(char *a, char *b)
+{
     comp++;
-    return strcmp(a,b);
+    return strcmp(a, b);
 }
-int compareShowDate(Date a, Date b){
-    if(a.year > b.year){
+int compareShowDate(Date a, Date b)
+{
+    if (a.year > b.year)
+    {
         comp += 1;
         return 1;
-    } else if(a.year < b.year){
+    }
+    else if (a.year < b.year)
+    {
         comp += 2;
         return -1;
     }
 
-    if(a.month > b.month){
+    if (a.month > b.month)
+    {
         comp += 3;
         return 1;
-    } else if(a.month < b.month){
+    }
+    else if (a.month < b.month)
+    {
         comp += 4;
         return -1;
     }
 
-    if(a.day > b.day){
+    if (a.day > b.day)
+    {
         comp += 5;
         return 1;
-    } else if(a.day < b.day){
+    }
+    else if (a.day < b.day)
+    {
         comp += 6;
         return -1;
     }
@@ -854,47 +906,55 @@ int compareShowDate(Date a, Date b){
     return 0;
 }
 
-int compareByDateAddedThenTitle(Show* a, Show* b) {
+int compareByDateAddedThenTitle(Show *a, Show *b)
+{
     int cmpDate = compareShowDate(a->date, b->date);
-    if (cmpDate != 0) {
+    if (cmpDate != 0)
+    {
         return cmpDate;
     }
     return compare(a->title, b->title);
 }
-void swapS(Node* a, Node* b) {
-    Show* temp = a->value;
+void swapS(Node *a, Node *b)
+{
+    Show *temp = a->value;
     a->value = b->value;
     b->value = temp;
-    mov+=3;
+    mov += 3;
 }
 
-Node* partition(Node* low,Node* high){
-    Show* pivot = high->value;
+Node *partition(Node *low, Node *high)
+{
+    Show *pivot = high->value;
 
-    Node* i = low->previous;
-    for (Node* j = low; j != high;
-         j = j->next) {
-        if (compareByDateAddedThenTitle(j->value, pivot) < 0) {
+    Node *i = low->previous;
+    for (Node *j = low; j != high;
+         j = j->next)
+    {
+        if (compareByDateAddedThenTitle(j->value, pivot) < 0)
+        {
             i = (i == NULL) ? low : i->next;
             swapS(i, j);
         }
     }
     i = (i == NULL) ? low : i->next;
-    
+
     swapS(i, high);
 
     return i;
 }
 
-void quickSort(Node* low, Node* high) {
-    if (low != NULL && high != NULL 
-        && low != high && low != high->next) {
-        Node* pivot = partition(low, high);
+void quickSort(Node *low, Node *high)
+{
+    if (low != NULL && high != NULL && low != high && low != high->next)
+    {
+        Node *pivot = partition(low, high);
         quickSort(low, pivot->previous);
         quickSort(pivot->next, high);
     }
 }
-void printSortVerde(char* filename, LinkedListShow* v){
+void printSortVerde(char *filename, LinkedListShow *v)
+{
     clock_t inicio = clock();
     quickSort(v->head, v->tail);
     printLL(v);
@@ -913,7 +973,7 @@ int main()
 
     char text[1000];
     scanf(" %[^\r\n]", text);
-    LinkedListShow* localShows = createLinkedListShow();
+    LinkedListShow *localShows = createLinkedListShow();
     while (strcmp((char *)text, "FIM"))
     {
         Show *s = search_by_id(text);
@@ -934,7 +994,7 @@ int main()
     //     scanf(" %[^\r\n]", text);
     //     processQueueLL(text, localShows);
     // }
-    
+
     printSortVerde("quicksort", localShows);
     return 0;
 }

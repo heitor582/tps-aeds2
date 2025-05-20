@@ -42,6 +42,7 @@ abstract class List<T> {
         size--;
     }
 }
+
 class SequencialList extends List<Show> {
     private int maxSize = 50;
     private Show[] list = new Show[maxSize];
@@ -137,6 +138,7 @@ class SequencialList extends List<Show> {
         return temp;
     }
 }
+
 class Node<T> {
     Node<T> next, previous;
     T val;
@@ -146,6 +148,7 @@ class Node<T> {
         this.val = val;
     }
 }
+
 class LinkedList extends List<Show> {
     Node<Show> head, tail = null;
 
@@ -578,60 +581,65 @@ public class Show {
         }
     }
 
-    public static int compare(String a, String b){
+    public static int compare(String a, String b) {
         comp++;
         return a.trim().compareToIgnoreCase(b.trim());
     }
-    public static int compareDateAddedAndTitle(Show a, Show b){
-        if(a.date_added == null || b.date_added == null){
+
+    public static int compareDateAddedAndTitle(Show a, Show b) {
+        if (a.date_added == null || b.date_added == null) {
             return compare(a.title, b.title);
         }
         comp++;
         int compDate = a.date_added.compareTo(b.date_added);
-        if(compDate != 0){
+        if (compDate != 0) {
             return compDate;
         }
 
         return compare(a.title, b.title);
     }
+
     static void swap(Node<Show> a, Node<Show> b) {
         Show temp = a.val;
         a.val = b.val;
         b.val = temp;
-        mov+=3;
+        mov += 3;
     }
+
     static Node<Show> partition(Node<Show> low, Node<Show> high) {
-            Node<Show> pivot = high;
-            Node<Show> i = low.previous;
+        Node<Show> pivot = high;
+        Node<Show> i = low.previous;
 
-            for (Node<Show> j = low; j != high; j = j.next) {
-                if (compareDateAddedAndTitle(j.val, pivot.val) < 0) {
-                    i = (i == null) ? low : i.next;
-                    swap(i, j);
-                }
+        for (Node<Show> j = low; j != high; j = j.next) {
+            if (compareDateAddedAndTitle(j.val, pivot.val) < 0) {
+                i = (i == null) ? low : i.next;
+                swap(i, j);
             }
-            i = (i == null) ? low : i.next;
-            swap(i, high);
-
-            return i;
         }
+        i = (i == null) ? low : i.next;
+        swap(i, high);
+
+        return i;
+    }
 
     static void quickSort(Node<Show> low, Node<Show> high) {
         if (low != null && high != null &&
-            low != high && low != high.next) {
+                low != high && low != high.next) {
 
             Node<Show> pivot = partition(low, high);
             quickSort(low, pivot.previous);
             quickSort(pivot.next, high);
         }
     }
-    public static void verdeSort(List<Show> list, String filename, Consumer<List<Show>> sort, Consumer<List<Show>> print) throws FileNotFoundException{
+
+    public static void verdeSort(List<Show> list, String filename, Consumer<List<Show>> sort,
+            Consumer<List<Show>> print) throws FileNotFoundException {
         long inicio = System.currentTimeMillis();
         sort.accept(list);
         long fimTempo = System.currentTimeMillis();
         print.accept(list);
 
-        PrintWriter log = new PrintWriter("867936_"+filename+".txt");
+        PrintWriter log = new PrintWriter("867936_" + filename + ".txt");
         log.println("867936\t" + comp + "\t" + mov + "\t" + (fimTempo - inicio));
         log.close();
     }
@@ -656,8 +664,8 @@ public class Show {
         // int size = sc.nextInt();
         // sc.nextLine();
         // for (int i = 0; i < size; i++) {
-        //     line = sc.nextLine();
-        //     process(line, (LinkedList) list);
+        // line = sc.nextLine();
+        // process(line, (LinkedList) list);
         // }
         // ((LinkedList) list).printInverse();
         verdeSort(list, "quicksort", lista -> {
@@ -665,7 +673,7 @@ public class Show {
         }, lista -> {
             lista.print();
         });
-        
+
         sc.close();
     }
 
