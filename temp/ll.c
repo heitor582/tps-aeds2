@@ -10,6 +10,28 @@ typedef struct LinkedList {
     int length;
 } LinkedList;
 
+LinkedList* createLL(){
+    LinkedList* ll = (LinkedList*) malloc(1*sizeof(LinkedList));
+    ll->head = NULL;
+    ll->tail = NULL;
+    ll->length = 0;
+    return ll;
+}
+int searchLL(LinkedList* ll, int val){
+    for(Node* cur = ll->head; cur != NULL; cur = cur->next){
+        if(cur->val == val) return 1;
+    }
+
+    return 0;
+}
+int searchLLReturnPosition(LinkedList* ll, int val){
+    int i = 0;
+    for(Node* cur = ll->head; cur != NULL; cur = cur->next, i++){
+        if(cur->val == val) return i+1;
+    }
+
+    return 0;
+}
 void print(LinkedList* ll){
     for(Node* cur = ll->head; cur != NULL; cur = cur->next){
         printf("%d", cur->val);
@@ -125,6 +147,11 @@ int delete(LinkedList* ll, int position){
     free(cur);
     return val;
 }
+int deleteByValue(LinkedList* ll, int val){
+    int position = searchLLReturnPosition(ll, val);
+    if(position == 0) return -1;
+    return delete(ll, position);
+}
 
 Node* split(Node* head){
     Node* fast = head;
@@ -159,7 +186,7 @@ Node* mergeSort(Node* head){
 }
 
 int main(){
-    LinkedList* ll = (LinkedList*) malloc(1*sizeof(LinkedList));
+    LinkedList* ll = createLL();
     insertOnHead(ll, 1);
     insertOnTail(ll, 3);
     insert(ll, 2,2);
