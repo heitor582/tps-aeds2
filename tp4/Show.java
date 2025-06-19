@@ -56,7 +56,6 @@ class Tree{
         return resp;
     }
 }
-
 class UpperTree{
     TreeUpperNode root;
 
@@ -145,6 +144,65 @@ class TreeNode{
     }
 }
 
+class RBTree{
+    RBTreeNode root;
+
+    public RBTree() {
+        this.root = null;
+    }
+    private RBTreeNode insert(String value, RBTreeNode node){
+        if(node == null) {
+            node = new RBTreeNode(value);
+        } else if(Show.compare(value, node.value) > 0){
+            node.right = insert(value, node.right);
+        } else if(Show.compare(value, node.value) < 0){
+            node.left = insert(value, node.left);
+        }
+        return node;
+    }
+    public boolean search(String value, RBTreeNode node){
+        boolean resp = false;
+
+        if(node == null) {
+            resp = false;
+        } else if(Show.compare(value, node.value) > 0){
+            System.out.print("dir ");
+            resp = search(value, node.right);
+        } else if(Show.compare(value, node.value) < 0){
+            System.out.print("esq ");
+            resp= search(value, node.left);
+        } else {
+            resp = true;
+        }
+        return resp;
+    }
+    public void insert(String value) {
+        this.root = insert(value, this.root);
+    }
+    public boolean search(String value) {
+        System.out.print("=>raiz  ");
+        boolean resp = search(value, this.root);
+        if(resp){
+            System.out.println("SIM");
+        }else{
+            System.out.println("NAO");
+        }
+        return resp;
+    }
+
+}
+
+class RBTreeNode{
+    String value;
+    RBTreeNode right;
+    RBTreeNode left;
+    boolean color = false;
+
+    public RBTreeNode(String value){
+        this.right = this.left = null;
+        this.value = value;
+    }
+}
 public class Show {
     static SimpleDateFormat ddf = new SimpleDateFormat("MMMM dd, yyyy");
     static SimpleDateFormat ddf2 = new SimpleDateFormat("MMMM d, yyyy");
@@ -447,6 +505,8 @@ public class Show {
 
             line = sc.nextLine();
         }
+
+        long init = System.currentTimeMillis();
         resetCounters();
         line = sc.nextLine();
         while (!line.equals("FIM")) {
@@ -455,7 +515,6 @@ public class Show {
 
             line = sc.nextLine();
         }
-        long init = System.currentTimeMillis();
         printVerde(init, "arvoreArvore");
         sc.close();
     }
