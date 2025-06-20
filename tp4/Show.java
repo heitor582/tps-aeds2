@@ -10,199 +10,334 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
-class Tree{
+class Tree {
     TreeNode root;
 
     public Tree() {
         this.root = null;
     }
-    private TreeNode insert(String value, TreeNode node){
-        if(node == null) {
+
+    private TreeNode insert(String value, TreeNode node) {
+        if (node == null) {
             node = new TreeNode(value);
-        } else if(Show.compare(value, node.value) > 0){
+        } else if (Show.compare(value, node.value) > 0) {
             node.right = insert(value, node.right);
-        } else if(Show.compare(value, node.value) < 0){
+        } else if (Show.compare(value, node.value) < 0) {
             node.left = insert(value, node.left);
         }
         return node;
     }
-    public boolean search(String value, TreeNode node){
+
+    public boolean search(String value, TreeNode node) {
         boolean resp = false;
 
-        if(node == null) {
+        if (node == null) {
             resp = false;
-        } else if(Show.compare(value, node.value) > 0){
+        } else if (Show.compare(value, node.value) > 0) {
             System.out.print("dir ");
             resp = search(value, node.right);
-        } else if(Show.compare(value, node.value) < 0){
+        } else if (Show.compare(value, node.value) < 0) {
             System.out.print("esq ");
-            resp= search(value, node.left);
+            resp = search(value, node.left);
         } else {
             resp = true;
         }
         return resp;
     }
+
     public void insert(String value) {
         this.root = insert(value, this.root);
     }
+
     public boolean search(String value) {
         System.out.print("=>raiz  ");
         boolean resp = search(value, this.root);
-        if(resp){
+        if (resp) {
             System.out.println("SIM");
-        }else{
+        } else {
             System.out.println("NAO");
         }
         return resp;
     }
 }
-class UpperTree{
+
+class UpperTree {
     TreeUpperNode root;
 
     public UpperTree() {
         this.root = null;
-        int list[] = {7,3,11,1,5,9,13,0,2,4,6,8,10,12,14};
-        for(int i = 0; i<15; i++){
+        int list[] = { 7, 3, 11, 1, 5, 9, 13, 0, 2, 4, 6, 8, 10, 12, 14 };
+        for (int i = 0; i < 15; i++) {
             insert(list[i]);
         }
     }
-    
-    private TreeUpperNode insert(int value, TreeUpperNode node){
-        if(node == null) {
+
+    private TreeUpperNode insert(int value, TreeUpperNode node) {
+        if (node == null) {
             node = new TreeUpperNode(value);
-        } else if(Show.compare(value, node.value) > 0){
+        } else if (Show.compare(value, node.value) > 0) {
             node.right = insert(value, node.right);
-        } else if(Show.compare(value, node.value) < 0){
+        } else if (Show.compare(value, node.value) < 0) {
             node.left = insert(value, node.left);
         }
         return node;
     }
+
     public void insert(int value) {
         this.root = insert(value, this.root);
     }
-    private TreeUpperNode insert(int value, String secondValue, TreeUpperNode node){
-        if(Show.compare(value, node.value) > 0){
+
+    private TreeUpperNode insert(int value, String secondValue, TreeUpperNode node) {
+        if (Show.compare(value, node.value) > 0) {
             node.right = insert(value, secondValue, node.right);
-        } else if(Show.compare(value, node.value) < 0){
+        } else if (Show.compare(value, node.value) < 0) {
             node.left = insert(value, secondValue, node.left);
         } else {
             node.innerTree.insert(secondValue);
         }
         return node;
     }
+
     public void insert(int value, String secondValue) {
         this.root = insert(value, secondValue, this.root);
     }
-    private boolean search(String search, TreeUpperNode node){
-        if(node == null) return false;
+
+    private boolean search(String search, TreeUpperNode node) {
+        if (node == null)
+            return false;
         boolean resp = false;
         resp = resp || node.innerTree.search(search, node.innerTree.root);
 
-        if(resp) return resp;
+        if (resp)
+            return resp;
 
         System.out.print(" ESQ ");
         resp = resp || search(search, node.left);
 
-        if(resp) return resp;
+        if (resp)
+            return resp;
         System.out.print(" DIR ");
         resp = resp || search(search, node.right);
         return resp;
     }
+
     public boolean search(String search) {
-        System.out.print("raiz ");
+        System.out.print("root ");
         boolean resp = search(search, this.root);
-        if(resp){
+        if (resp) {
             System.out.println(" SIM");
-        }else{
+        } else {
             System.out.println(" NAO");
         }
         return resp;
     }
 }
 
-class TreeUpperNode{
+class TreeUpperNode {
     int value;
     Tree innerTree;
     TreeUpperNode right;
     TreeUpperNode left;
 
-    public TreeUpperNode(int value){
+    public TreeUpperNode(int value) {
         this.right = this.left = null;
         innerTree = new Tree();
         this.value = value;
     }
 }
 
-class TreeNode{
+class TreeNode {
     String value;
     TreeNode right;
     TreeNode left;
 
-    public TreeNode(String value){
+    public TreeNode(String value) {
         this.right = this.left = null;
         this.value = value;
     }
 }
 
-class RBTree{
+class RBTree {
     RBTreeNode root;
 
     public RBTree() {
         this.root = null;
     }
-    private RBTreeNode insert(String value, RBTreeNode node){
-        if(node == null) {
-            node = new RBTreeNode(value);
-        } else if(Show.compare(value, node.value) > 0){
-            node.right = insert(value, node.right);
-        } else if(Show.compare(value, node.value) < 0){
-            node.left = insert(value, node.left);
-        }
-        return node;
+
+    private RBTreeNode rotacaoDir(RBTreeNode no) {
+        RBTreeNode noEsq = no.left;
+        RBTreeNode noEsqDir = noEsq.right;
+
+        noEsq.right = no;
+        no.left = noEsqDir;
+
+        return noEsq;
     }
-    public boolean search(String value, RBTreeNode node){
+
+    private RBTreeNode rotacaoEsq(RBTreeNode no) {
+        RBTreeNode noDir = no.right;
+        RBTreeNode noDirEsq = noDir.left;
+
+        noDir.left = no;
+        no.right = noDirEsq;
+        return noDir;
+    }
+
+    private RBTreeNode rotacaoDirEsq(RBTreeNode no) {
+        no.right = rotacaoDir(no.right);
+        return rotacaoEsq(no);
+    }
+
+    private RBTreeNode rotacaoEsqDir(RBTreeNode no) {
+        no.left = rotacaoEsq(no.left);
+        return rotacaoDir(no);
+    }
+
+    private void balance(RBTreeNode bisavo, RBTreeNode avo, RBTreeNode pai, RBTreeNode i) {
+        if (pai.color) {
+            if (Show.compare(pai.value, avo.value) > 0) {
+                if (Show.compare(i.value, pai.value) > 0) {
+                    avo = rotacaoEsq(avo);
+                } else {
+                    avo = rotacaoDirEsq(avo);
+                }
+            } else {
+                if (Show.compare(i.value, pai.value) < 0) {
+                    avo = rotacaoDir(avo);
+                } else {
+                    avo = rotacaoEsqDir(avo);
+                }
+            }
+            if (bisavo == null) {
+                root = avo;
+            } else if (Show.compare(avo.value, bisavo.value) < 0) {
+                bisavo.left = avo;
+            } else {
+                bisavo.right = avo;
+            }
+            avo.color = false;
+            avo.left.color = avo.right.color = true;
+        }
+
+    }
+
+    private void insert(String value, RBTreeNode bisavo, RBTreeNode avo, RBTreeNode pai, RBTreeNode i)
+            throws Exception {
+        if (i == null) {
+            if (Show.compare(value, pai.value) < 0) {
+                i = pai.left = new RBTreeNode(value, true);
+            } else {
+                i = pai.right = new RBTreeNode(value, true);
+            }
+            if (pai.color == true) {
+                balance(bisavo, avo, pai, i);
+            }
+        } else {
+            if (i.left != null && i.right != null && i.left.color == true && i.right.color == true) {
+                i.color = true;
+                i.left.color = i.right.color = false;
+                if (i == root) {
+                    i.color = false;
+                } else if (pai.color == true) {
+                    balance(bisavo, avo, pai, i);
+                }
+            }
+            if (Show.compare(value, i.value) < 0) {
+                insert(value, avo, pai, i, i.left);
+            } else if (Show.compare(value, i.value) > 0) {
+                insert(value, avo, pai, i, i.right);
+            }
+        }
+    }
+
+    public void insert(String value) throws Exception {
+        if (root == null) {
+            root = new RBTreeNode(value);
+        } else if (root.left == null && root.right == null) {
+            if (Show.compare(value, root.value) < 0) {
+                root.left = new RBTreeNode(value);
+            } else {
+                root.right = new RBTreeNode(value);
+            }
+        } else if (root.left == null) {
+            if (Show.compare(value, root.value) < 0) {
+                root.left = new RBTreeNode(value);
+            } else if (Show.compare(value, root.right.value) < 0) {
+                root.left = new RBTreeNode(root.value);
+                root.value = value;
+            } else {
+                root.left = new RBTreeNode(root.value);
+                root.value = root.right.value;
+                root.right.value = value;
+            }
+            root.left.color = root.right.color = false;
+        } else if (root.right == null) {
+            if (Show.compare(value, root.value) > 0) {
+                root.right = new RBTreeNode(value);
+            } else if (Show.compare(value, root.left.value) > 0) {
+                root.right = new RBTreeNode(root.value);
+                root.value = value;
+            } else {
+                root.right = new RBTreeNode(root.value);
+                root.value = root.left.value;
+                root.left.value = value;
+            }
+            root.left.color = root.right.color = false;
+
+        } else {
+            insert(value, null, null, null, root);
+        }
+        root.color = false;
+    }
+
+    public boolean search(String value, RBTreeNode node) {
         boolean resp = false;
 
-        if(node == null) {
+        if (node == null) {
             resp = false;
-        } else if(Show.compare(value, node.value) > 0){
+        } else if (Show.compare(value, node.value) > 0) {
             System.out.print("dir ");
             resp = search(value, node.right);
-        } else if(Show.compare(value, node.value) < 0){
+        } else if (Show.compare(value, node.value) < 0) {
             System.out.print("esq ");
-            resp= search(value, node.left);
+            resp = search(value, node.left);
         } else {
             resp = true;
         }
         return resp;
     }
-    public void insert(String value) {
-        this.root = insert(value, this.root);
-    }
+
     public boolean search(String value) {
         System.out.print("=>raiz  ");
         boolean resp = search(value, this.root);
-        if(resp){
+        if (resp) {
             System.out.println("SIM");
-        }else{
+        } else {
             System.out.println("NAO");
         }
         return resp;
     }
-
 }
 
-class RBTreeNode{
+class RBTreeNode {
     String value;
     RBTreeNode right;
     RBTreeNode left;
+    RBTreeNode parent;
     boolean color = false;
 
-    public RBTreeNode(String value){
-        this.right = this.left = null;
+    public RBTreeNode(String value) {
+        this.right = this.left = this.parent = null;
         this.value = value;
     }
+
+    public RBTreeNode(String value, boolean color) {
+        this.right = this.left = this.parent = null;
+        this.value = value;
+        this.color = color;
+    }
 }
+
 public class Show {
     static SimpleDateFormat ddf = new SimpleDateFormat("MMMM dd, yyyy");
     static SimpleDateFormat ddf2 = new SimpleDateFormat("MMMM d, yyyy");
@@ -221,10 +356,12 @@ public class Show {
     private String range;
     private String duration;
     private String[] listed_in;
+
     public static void resetCounters() {
-      comp=0;
-      mov = 0;
+        comp = 0;
+        mov = 0;
     }
+
     public Show clone() {
         return new Show(this.show_id, this.type, this.title, this.director, this.cast, this.country, this.date_added,
                 this.release_year, this.range, this.duration, this.listed_in);
@@ -455,12 +592,14 @@ public class Show {
         System.out.print(String.join(", ", listed_in));
         System.out.println("] ##");
     }
+
     public static void printVerde(long init, String filename) throws FileNotFoundException {
         long end = System.currentTimeMillis();
         PrintWriter log = new PrintWriter("867936_" + filename + ".txt");
         log.println("867936\t" + (end - init) + "\t" + comp);
         log.close();
     }
+
     public static void startShows() {
         try {
             FileInputStream fstream = new FileInputStream(FILE_PATH);
@@ -484,22 +623,24 @@ public class Show {
         comp++;
         return a.trim().compareTo(b.trim());
     }
+
     public static int compare(Integer a, Integer b) {
         comp++;
         return a.compareTo(b);
     }
-    public static void main(String[] args) throws FileNotFoundException {
+
+    public static void main(String[] args) throws Exception {
         startShows();
         Scanner sc = new Scanner(System.in);
 
-        UpperTree upperTree = new UpperTree();
+        RBTree upperTree = new RBTree();
 
         String line = sc.nextLine();
 
         while (!line.equals("FIM")) {
             Show show = searchById(line, shows);
             if (show != null)
-                upperTree.insert(show.release_year%15, show.title);
+                upperTree.insert(show.title);
             else
                 System.out.println("x Show not found!");
 
@@ -515,7 +656,7 @@ public class Show {
 
             line = sc.nextLine();
         }
-        printVerde(init, "arvoreArvore");
+        printVerde(init, "avinegra");
         sc.close();
     }
 
