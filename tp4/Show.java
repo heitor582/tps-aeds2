@@ -60,7 +60,6 @@ class Tree {
         return resp;
     }
 }
-
 class UpperTree {
     TreeUpperNode root;
 
@@ -132,7 +131,6 @@ class UpperTree {
         return resp;
     }
 }
-
 class TreeUpperNode {
     int value;
     Tree innerTree;
@@ -145,7 +143,6 @@ class TreeUpperNode {
         this.value = value;
     }
 }
-
 class TreeNode {
     String value;
     TreeNode right;
@@ -156,7 +153,6 @@ class TreeNode {
         this.value = value;
     }
 }
-
 class RBTree {
     RBTreeNode root;
 
@@ -318,7 +314,6 @@ class RBTree {
         return resp;
     }
 }
-
 class RBTreeNode {
     String value;
     RBTreeNode right;
@@ -337,11 +332,178 @@ class RBTreeNode {
         this.color = color;
     }
 }
+class ReserveHash{
+    private int resSize = 9;
+    private int tabSize = 21;
+    private String[] tab;
+    public ReserveHash() {
+        this.tab = new String[resSize + tabSize];
+    }
+    public ReserveHash(int resSize, int tabSize){
+        this.resSize = resSize;
+        this.tabSize = tabSize;
+        this.tab = new String[resSize + tabSize];
+    }
+    private int hash(String value) {
+        int sum = 0;
+        for(int i = 0; i<value.length(); i++){
+            sum += value.charAt(i);
+        }
+
+        return sum%tabSize;
+    }
+    public boolean search(String value){
+        int hash = hash(value);
+        int pos = hash;
+        boolean res = false;
+        if(Show.compare(tab[hash], value) == 0){
+            res = true;
+        } else {
+            for(int i = tabSize; i<(tabSize+resSize); i++){
+                if(Show.compare(tab[i], value) == 0){
+                    res = true;
+                }
+            }
+        }
+        System.out.printf(" (Posicao: %d) %s\n", pos, (res ? "SIM" : "NAO"));
+        return res;
+    }
+    public void insert(String value) {
+        int hash = hash(value);
+        if(tab[hash] == null){
+            tab[hash] = value;
+        } else {
+            for(int i = tabSize; i<(tabSize+resSize); i++){
+                if(tab[i] == null){
+                    tab[i] = value;
+                    i+=(tabSize+resSize);
+                }
+            }
+        }
+    }
+}
+class HashRehash{
+    private int tabSize = 21;
+    private String[] tab;
+    public HashRehash() {
+        this.tab = new String[tabSize];
+    }
+    public HashRehash(int tabSize){
+        this.tabSize = tabSize;
+        this.tab = new String[tabSize];
+    }
+    private int hash(String value) {
+        int sum = 0;
+        for(int i = 0; i<value.length(); i++){
+            sum += value.charAt(i);
+        }
+
+        return sum%tabSize;
+    }
+    private int rehash(String value) {
+        int sum = 0;
+        for(int i = 0; i<value.length(); i++){
+            sum += value.charAt(i);
+        }
+
+        return (sum+1)%tabSize;
+    }
+    public boolean search(String value){
+        int hash = hash(value);
+        int pos = hash;
+        boolean res = Show.compare(tab[hash], value) == 0 || Show.compare(tab[rehash(value)], value) == 0;
+        System.out.printf(" (Posicao: %d) %s\n", pos, (res ? "SIM" : "NAO"));
+        return res;
+    }
+    public void insert(String value) {
+        int hash = hash(value);
+        if(tab[hash] == null){
+            tab[hash] = value;
+        } else{
+            hash = rehash(value);
+            if(tab[hash] == null){
+                tab[hash] = value;
+            }
+        }
+    }
+}
+class Node{
+    String value;
+    Node next;
+    public Node(String value){
+        this.value = value;
+        this.next = null;
+    }
+}
+class LL{
+    Node head;
+    Node tail;
+    public LL(){
+        head = tail = null;
+    }
+    public boolean search(String value){
+        boolean resp = false;
+        for(Node cur = head; cur != null; cur = cur.next){
+            if(Show.compare(value, cur.value) == 0){
+                resp = true;
+            }
+        }
+        return resp;
+    }
+    public void insert(String value) {
+        Node newNode = new Node(value);
+        if(head == tail && head == null){
+            head = tail = newNode;
+        } else {
+            tail.next = newNode;
+            tail = newNode;
+        }
+    }
+}
+class IndirectHash{
+    private int tabSize = 21;
+    private LL[] tab;
+    public IndirectHash() {
+        this.tab = new LL[tabSize];
+        for(int i = 0; i<tabSize; i++){
+            this.tab[i] = new LL();
+        }
+    }
+    public IndirectHash(int tabSize){
+        this.tabSize = tabSize;
+        this.tab = new LL[tabSize];
+        for(int i = 0; i<tabSize; i++){
+            this.tab[i] = new LL();
+        }
+    }
+    private int hash(String value) {
+        int sum = 0;
+        for(int i = 0; i<value.length(); i++){
+            sum += value.charAt(i);
+        }
+
+        return sum%tabSize;
+    }
+    public boolean search(String value){
+        int hash = hash(value);
+        int pos = hash;
+        boolean res = tab[hash].search(value);
+
+        System.out.printf(" (Posicao: %d) %s %s\n", pos, value, (res ? "SIM" : "NAO"));
+        return res;
+    }
+    public void insert(String value) {
+        int hash = hash(value);
+        if(!tab[hash].search(value)){
+            tab[hash].insert(value);
+        }
+    }
+}
 
 public class Show {
     static SimpleDateFormat ddf = new SimpleDateFormat("MMMM dd, yyyy");
     static SimpleDateFormat ddf2 = new SimpleDateFormat("MMMM d, yyyy");
-    public static final String FILE_PATH = "/tmp/disneyplus.csv";
+    public static final String FILE_PATH = "./tmp/disneyplus.csv";
     public static ArrayList<Show> shows = new ArrayList<Show>();
     public static int comp = 0;
     public static int mov = 0;
@@ -633,14 +795,14 @@ public class Show {
         startShows();
         Scanner sc = new Scanner(System.in);
 
-        RBTree upperTree = new RBTree();
+        IndirectHash hash = new IndirectHash();
 
         String line = sc.nextLine();
 
         while (!line.equals("FIM")) {
             Show show = searchById(line, shows);
             if (show != null)
-                upperTree.insert(show.title);
+                hash.insert(show.title);
             else
                 System.out.println("x Show not found!");
 
@@ -652,11 +814,11 @@ public class Show {
         line = sc.nextLine();
         while (!line.equals("FIM")) {
 
-            upperTree.search(line);
+            hash.search(line);
 
             line = sc.nextLine();
         }
-        printVerde(init, "avinegra");
+        printVerde(init, "hashIndireta");
         sc.close();
     }
 
