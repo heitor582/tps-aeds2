@@ -489,7 +489,7 @@ class IndirectHash{
         int pos = hash;
         boolean res = tab[hash].search(value);
 
-        System.out.printf(" (Posicao: %d) %s %s\n", pos, value, (res ? "SIM" : "NAO"));
+        System.out.printf(" (Posicao: %d) %s\n", pos, (res ? "SIM" : "NAO"));
         return res;
     }
     public void insert(String value) {
@@ -503,7 +503,7 @@ class IndirectHash{
 public class Show {
     static SimpleDateFormat ddf = new SimpleDateFormat("MMMM dd, yyyy");
     static SimpleDateFormat ddf2 = new SimpleDateFormat("MMMM d, yyyy");
-    public static final String FILE_PATH = "./tmp/disneyplus.csv";
+    public static final String FILE_PATH = "/tmp/disneyplus.csv";
     public static ArrayList<Show> shows = new ArrayList<Show>();
     public static int comp = 0;
     public static int mov = 0;
